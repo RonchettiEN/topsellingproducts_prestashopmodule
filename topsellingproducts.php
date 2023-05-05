@@ -59,7 +59,7 @@ class Topsellingproducts extends Module
      */
     public function install()
     {
-        Configuration::updateValue('TOPSELLINGPRODUCTS_QUANTITY_OF_PRODUCTS_TO_DISPLAY', false);
+        Configuration::updateValue('TOPSELLINGPRODUCTS_QUANTITY_OF_PRODUCTS_TO_DISPLAY', 5);
 
         return parent::install() &&
             $this->registerHook('header') &&
