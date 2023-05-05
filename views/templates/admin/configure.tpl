@@ -25,5 +25,5 @@
 
 <div class="panel">
 	<h3><i class="icon icon-credit-card"></i> {l s='Top selling products' mod='topsellingproducts'}</h3>
-	<p>{l s='Displays a top x of best-selling products on the home page.' mod='topsellingproducts'}</p>
+	<p>{l s='Displays a top with x amount of the best selling products on the home page.' mod='topsellingproducts'}</p>
 </div>

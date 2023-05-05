@@ -48,7 +48,7 @@ class Topsellingproducts extends Module
         parent::__construct();
 
         $this->displayName = $this->l('Top selling products');
-        $this->description = $this->l('Displays a top x of best-selling products on the home page');
+        $this->description = $this->l('Displays a top with x amount of the best selling products on the home page');
 
         $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
     }
