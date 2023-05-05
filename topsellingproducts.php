@@ -59,7 +59,7 @@ class Topsellingproducts extends Module
      */
     public function install()
     {
-        Configuration::updateValue('TOPSELLINGPRODUCTS_LIVE_MODE', false);
+        Configuration::updateValue('TOPSELLINGPRODUCTS_QUANTITY_OF_PRODUCTS_TO_DISPLAY', false);
 
         return parent::install() &&
             $this->registerHook('header') &&
@@ -69,7 +69,7 @@ class Topsellingproducts extends Module
 
     public function uninstall()
     {
-        Configuration::deleteByName('TOPSELLINGPRODUCTS_LIVE_MODE');
+        Configuration::deleteByName('TOPSELLINGPRODUCTS_QUANTITY_OF_PRODUCTS_TO_DISPLAY');
 
         return parent::uninstall();
     }
@@ -134,36 +134,11 @@ class Topsellingproducts extends Module
                 ),
                 'input' => array(
                     array(
-                        'type' => 'switch',
-                        'label' => $this->l('Live mode'),
-                        'name' => 'TOPSELLINGPRODUCTS_LIVE_MODE',
-                        'is_bool' => true,
-                        'desc' => $this->l('Use this module in live mode'),
-                        'values' => array(
-                            array(
-                                'id' => 'active_on',
-                                'value' => true,
-                                'label' => $this->l('Enabled')
-                            ),
-                            array(
-                                'id' => 'active_off',
-                                'value' => false,
-                                'label' => $this->l('Disabled')
-                            )
-                        ),
-                    ),
-                    array(
                         'col' => 3,
                         'type' => 'text',
-                        'prefix' => '<i class="icon icon-envelope"></i>',
-                        'desc' => $this->l('Enter a valid email address'),
-                        'name' => 'TOPSELLINGPRODUCTS_ACCOUNT_EMAIL',
-                        'label' => $this->l('Email'),
-                    ),
-                    array(
-                        'type' => 'password',
-                        'name' => 'TOPSELLINGPRODUCTS_ACCOUNT_PASSWORD',
-                        'label' => $this->l('Password'),
+                        'desc' => $this->l('Enter a number'),
+                        'name' => 'TOPSELLINGPRODUCTS_QUANTITY_OF_PRODUCTS_TO_DISPLAY',
+                        'label' => $this->l('Quantity of products to display'),
                     ),
                 ),
                 'submit' => array(
@@ -179,9 +154,7 @@ class Topsellingproducts extends Module
     protected function getConfigFormValues()
     {
         return array(
-            'TOPSELLINGPRODUCTS_LIVE_MODE' => Configuration::get('TOPSELLINGPRODUCTS_LIVE_MODE', true),
-            'TOPSELLINGPRODUCTS_ACCOUNT_EMAIL' => Configuration::get('TOPSELLINGPRODUCTS_ACCOUNT_EMAIL', 'contact@prestashop.com'),
-            'TOPSELLINGPRODUCTS_ACCOUNT_PASSWORD' => Configuration::get('TOPSELLINGPRODUCTS_ACCOUNT_PASSWORD', null),
+            'TOPSELLINGPRODUCTS_QUANTITY_OF_PRODUCTS_TO_DISPLAY' => Configuration::get('TOPSELLINGPRODUCTS_QUANTITY_OF_PRODUCTS_TO_DISPLAY', 5),
         );
     }
 
