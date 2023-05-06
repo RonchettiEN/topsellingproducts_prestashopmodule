@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+	<name>topsellingproducts</name>
+	<displayName><![CDATA[Top selling products]]></displayName>
+	<version><![CDATA[1.0.0]]></version>
+	<description><![CDATA[Displays a top with x amount of the best selling products on the home page]]></description>
+	<author><![CDATA[Ronchetti Ezequiel Nicol&aacute;s]]></author>
+	<tab><![CDATA[content_management]]></tab>
+	<is_configurable>1</is_configurable>
+	<need_instance>0</need_instance>
+	<limited_countries></limited_countries>
+</module>

@@ -190,15 +190,29 @@ class Topsellingproducts extends Module
         $this->context->controller->addCSS($this->_path.'/views/css/front.css');
     }
 
-    public function hookDisplayHome($params)
+    public function hookDisplayHome()
     {
-        $sql = "SELECT p.id_product, p.reference, p.price, sp.reduction, sp.reduction_type, sp.from_quantity, sp.id_product_attribute
+        $quantity = (int)Configuration::get('TOPSELLINGPRODUCTS_QUANTITY_OF_PRODUCTS_TO_DISPLAY');
+        $sql = "
+            SELECT p.id_product, p.reference, p.price, /* sp.reduction, sp.reduction_type, sp.from_quantity, sp.id_product_attribute, */ i.id_image
             FROM "._DB_PREFIX_."product p
-            JOIN "._DB_PREFIX_."specific_price sp ON p.id_product = sp.id_product
-            WHERE sp.`from` <= NOW() AND sp.`to` >= NOW()";
-
-        $products = Db::getInstance()->executeS($sql);
-
+            /* JOIN "._DB_PREFIX_."specific_price sp ON p.id_product = sp.id_product */
+            JOIN "._DB_PREFIX_."image i ON p.id_product = i.id_product AND i.cover = 1
+            /* ORDER BY sp.`from` DESC */
+            LIMIT $quantity
+        ";
+        $products_db = Db::getInstance()->executeS($sql);
+        $products = [];
+        foreach ($products_db as $product_db) {
+            $product = new Product($product_db['id_product']);
+            $image_url = $this->context->link->getImageLink($product->link_rewrite, $product_db['id_image']);
+            $products[] = array(
+                'id_product' => $product_db['id_product'],
+                'image_url' => $image_url,
+                "price" => $product_db['price']
+            );
+        }
+        // var_dump($products);die;
         $this->context->smarty->assign(array(
             'products' => $products
         ));
