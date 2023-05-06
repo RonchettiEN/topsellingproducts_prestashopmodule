@@ -192,6 +192,17 @@ class Topsellingproducts extends Module
 
     public function hookDisplayHome($params)
     {
-        return '<p>Bienvenido a nuestra tienda en línea!</p>';
+        $sql = "SELECT p.id_product, p.reference, p.price, sp.reduction, sp.reduction_type, sp.from_quantity, sp.id_product_attribute
+            FROM "._DB_PREFIX_."product p
+            JOIN "._DB_PREFIX_."specific_price sp ON p.id_product = sp.id_product
+            WHERE sp.`from` <= NOW() AND sp.`to` >= NOW()";
+
+        $products = Db::getInstance()->executeS($sql);
+
+        $this->context->smarty->assign(array(
+            'products' => $products
+        ));
+        
+        return $this->display(__FILE__, 'views/templates/hook/home.tpl');
     }
 }
