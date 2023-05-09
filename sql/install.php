@@ -27,7 +27,11 @@ $sql = array();
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'productsonsale` (
     `id_productsonsale` int(11) NOT NULL AUTO_INCREMENT,
-    PRIMARY KEY  (`id_productsonsale`)
+    PRIMARY KEY  (`id_productsonsale`),
+    `error_type` varchar(255) DEFAULT NULL,
+    `error_message` varchar(255) DEFAULT NULL,
+    `error_in_file` varchar(255) DEFAULT NULL,
+    `error_in_line` int(11) DEFAULT NULL
 ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
 foreach ($sql as $query) {

@@ -61,6 +61,8 @@ class ProductsOnSale extends Module
     {
         Configuration::updateValue('PRODUCTSONSALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY', 10);
 
+        include(dirname(__FILE__).'/sql/install.php');
+
         return parent::install() &&
             $this->registerHook('header') &&
             $this->registerHook('displayBackOfficeHeader') &&
@@ -70,6 +72,8 @@ class ProductsOnSale extends Module
     public function uninstall()
     {
         Configuration::deleteByName('PRODUCTSONSALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY');
+
+        include(dirname(__FILE__).'/sql/uninstall.php');
 
         return parent::uninstall();
     }
