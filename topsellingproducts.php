@@ -59,7 +59,7 @@ class Topsellingproducts extends Module
      */
     public function install()
     {
-        Configuration::updateValue('TOPSELLINGPRODUCTS_QUANTITY_OF_PRODUCTS_TO_DISPLAY', 5);
+        Configuration::updateValue('TOPSELLINGPRODUCTS_QUANTITY_OF_PRODUCTS_TO_DISPLAY', 10);
 
         return parent::install() &&
             $this->registerHook('header') &&
@@ -154,7 +154,7 @@ class Topsellingproducts extends Module
     protected function getConfigFormValues()
     {
         return array(
-            'TOPSELLINGPRODUCTS_QUANTITY_OF_PRODUCTS_TO_DISPLAY' => Configuration::get('TOPSELLINGPRODUCTS_QUANTITY_OF_PRODUCTS_TO_DISPLAY', 5),
+            'TOPSELLINGPRODUCTS_QUANTITY_OF_PRODUCTS_TO_DISPLAY' => Configuration::get('TOPSELLINGPRODUCTS_QUANTITY_OF_PRODUCTS_TO_DISPLAY', 10),
         );
     }
 
@@ -194,11 +194,11 @@ class Topsellingproducts extends Module
     {
         $quantity = (int)Configuration::get('TOPSELLINGPRODUCTS_QUANTITY_OF_PRODUCTS_TO_DISPLAY');
         $sql = "
-            SELECT p.id_product, p.reference, p.price, /* sp.reduction, sp.reduction_type, sp.from_quantity, sp.id_product_attribute, */ i.id_image
+            SELECT p.id_product, p.price, p.wholesale_price, sp.reduction, sp.reduction_type, i.id_image
             FROM "._DB_PREFIX_."product p
-            /* JOIN "._DB_PREFIX_."specific_price sp ON p.id_product = sp.id_product */
+            JOIN "._DB_PREFIX_."specific_price sp ON p.id_product = sp.id_product
             JOIN "._DB_PREFIX_."image i ON p.id_product = i.id_product AND i.cover = 1
-            /* ORDER BY sp.`from` DESC */
+            ORDER BY sp.`from` DESC
             LIMIT $quantity
         ";
         $products_db = Db::getInstance()->executeS($sql);
@@ -206,10 +206,23 @@ class Topsellingproducts extends Module
         foreach ($products_db as $product_db) {
             $product = new Product($product_db['id_product']);
             $image_url = $this->context->link->getImageLink($product->link_rewrite, $product_db['id_image']);
+            $product_url = $this->context->link->getProductLink($product_db['id_product']);
+            $price = $product_db['price'] * 1.21;
+            switch ($product_db['reduction_type']) {
+                case 'percentage':
+                    $price_with_reduction = $price - ($price * (float)$product_db['reduction']);
+                    break;
+                case 'amount':
+                    $price_with_reduction = $price - (float)$product_db['reduction'];
+                    break;
+            }
             $products[] = array(
                 'id_product' => $product_db['id_product'],
                 'image_url' => $image_url,
-                "price" => $product_db['price']
+                'product_url' => $product_url,
+                'price' => str_replace(".",",", round($price,2)),
+                'price_with_reduction' => str_replace(".",",", round($price_with_reduction,2)),
+                'reduction' => (int)($product_db['reduction'] * 100)
             );
         }
         // var_dump($products);die;

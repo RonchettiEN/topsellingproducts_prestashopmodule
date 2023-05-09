@@ -25,3 +25,64 @@
 * Don't forget to prefix your containers with your own identifier
 * to avoid any conflicts with others containers.
 */
+
+.swiper-container {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    user-select: none;
+  }
+  
+  .swiper-slide {
+    width: calc(100% / 5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .swiper-slide .caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 5px;
+    font-size: 26px;
+    text-align: center;
+  }
+  
+  .swiper-slide img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    width: 250px; 
+    height: 250px; 
+  }
+
+  h1 {
+    color: #333;
+    font-size: 36px;
+    font-weight: bold;
+    text-align: center;
+    text-shadow: 2px 2px #ccc;
+  }
+
+  .swiper-slide .caption .price {
+    font-size: 20px;
+    color: white;
+  }
+
+  .swiper-slide .caption .old-price {
+    color: #6f6f6f;
+    text-decoration: line-through;
+    font-size: 20px;
+  }
+
+  .swiper-slide .caption .price-percent-reduction {
+    background: #f13340;
+    border: 1px solid #d02a2c;
+    font: 600 21px/24px "Open Sans", sans-serif;
+    color: #fff;
+    padding: 0 5px 0 3px;;
+  }
