@@ -28,13 +28,13 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class Topsellingproducts extends Module
+class ProductsOnSale extends Module
 {
     protected $config_form = false;
 
     public function __construct()
     {
-        $this->name = 'topsellingproducts';
+        $this->name = 'productsonsale';
         $this->tab = 'content_management';
         $this->version = '1.0.0';
         $this->author = 'Ronchetti Ezequiel Nicolás';
@@ -47,8 +47,8 @@ class Topsellingproducts extends Module
 
         parent::__construct();
 
-        $this->displayName = $this->l('Top selling products');
-        $this->description = $this->l('Displays a top with x amount of the best selling products on the home page');
+        $this->displayName = $this->l('Products on sale');
+        $this->description = $this->l('Displays x number of products on sale on the home page');
 
         $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
     }
@@ -59,7 +59,7 @@ class Topsellingproducts extends Module
      */
     public function install()
     {
-        Configuration::updateValue('TOPSELLINGPRODUCTS_QUANTITY_OF_PRODUCTS_TO_DISPLAY', 10);
+        Configuration::updateValue('PRODUCTSONSALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY', 10);
 
         return parent::install() &&
             $this->registerHook('header') &&
@@ -69,7 +69,7 @@ class Topsellingproducts extends Module
 
     public function uninstall()
     {
-        Configuration::deleteByName('TOPSELLINGPRODUCTS_QUANTITY_OF_PRODUCTS_TO_DISPLAY');
+        Configuration::deleteByName('PRODUCTSONSALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY');
 
         return parent::uninstall();
     }
@@ -82,7 +82,7 @@ class Topsellingproducts extends Module
         /**
          * If values have been submitted in the form, process.
          */
-        if (((bool)Tools::isSubmit('submitTopsellingproductsModule')) == true) {
+        if (((bool)Tools::isSubmit('submitProductsOnSaleModule')) == true) {
             $this->postProcess();
         }
 
@@ -107,7 +107,7 @@ class Topsellingproducts extends Module
         $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG', 0);
 
         $helper->identifier = $this->identifier;
-        $helper->submit_action = 'submitTopsellingproductsModule';
+        $helper->submit_action = 'submitProductsOnSaleModule';
         $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
             .'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
         $helper->token = Tools::getAdminTokenLite('AdminModules');
@@ -137,7 +137,7 @@ class Topsellingproducts extends Module
                         'col' => 3,
                         'type' => 'text',
                         'desc' => $this->l('Enter a number'),
-                        'name' => 'TOPSELLINGPRODUCTS_QUANTITY_OF_PRODUCTS_TO_DISPLAY',
+                        'name' => 'PRODUCTSONSALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY',
                         'label' => $this->l('Quantity of products to display'),
                     ),
                 ),
@@ -154,7 +154,7 @@ class Topsellingproducts extends Module
     protected function getConfigFormValues()
     {
         return array(
-            'TOPSELLINGPRODUCTS_QUANTITY_OF_PRODUCTS_TO_DISPLAY' => Configuration::get('TOPSELLINGPRODUCTS_QUANTITY_OF_PRODUCTS_TO_DISPLAY', 10),
+            'PRODUCTSONSALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY' => Configuration::get('PRODUCTSONSALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY', 10),
         );
     }
 
@@ -192,7 +192,7 @@ class Topsellingproducts extends Module
 
     public function hookDisplayHome()
     {
-        $quantity = (int)Configuration::get('TOPSELLINGPRODUCTS_QUANTITY_OF_PRODUCTS_TO_DISPLAY');
+        $quantity = (int)Configuration::get('PRODUCTSONSALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY');
         $sql = "
             SELECT p.id_product, p.price, p.wholesale_price, sp.reduction, sp.reduction_type, i.id_image
             FROM "._DB_PREFIX_."product p
