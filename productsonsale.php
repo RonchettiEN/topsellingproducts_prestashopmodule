@@ -59,23 +59,31 @@ class ProductsOnSale extends Module
      */
     public function install()
     {
-        Configuration::updateValue('PRODUCTSONSALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY', 10);
-
-        include(dirname(__FILE__).'/sql/install.php');
-
-        return parent::install() &&
-            $this->registerHook('header') &&
-            $this->registerHook('displayBackOfficeHeader') &&
-            $this->registerHook('displayHome');
+        try {
+            Configuration::updateValue('PRODUCTSONSALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY', 10);
+    
+            include(dirname(__FILE__).'/sql/install.php');
+    
+            return parent::install() &&
+                $this->registerHook('header') &&
+                $this->registerHook('displayBackOfficeHeader') &&
+                $this->registerHook('displayHome');
+        } catch (\Throwable $error) {
+            $this->saveError($error);
+        }
     }
 
     public function uninstall()
     {
-        Configuration::deleteByName('PRODUCTSONSALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY');
-
-        include(dirname(__FILE__).'/sql/uninstall.php');
-
-        return parent::uninstall();
+        try {
+            Configuration::deleteByName('PRODUCTSONSALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY');
+    
+            include(dirname(__FILE__).'/sql/uninstall.php');
+    
+            return parent::uninstall();
+        } catch (\Throwable $error) {
+            $this->saveError($error);
+        }
     }
 
     /**
@@ -83,18 +91,22 @@ class ProductsOnSale extends Module
      */
     public function getContent()
     {
-        /**
-         * If values have been submitted in the form, process.
-         */
-        if (((bool)Tools::isSubmit('submitProductsOnSaleModule')) == true) {
-            $this->postProcess();
+        try {
+            /**
+             * If values have been submitted in the form, process.
+             */
+            if (((bool)Tools::isSubmit('submitProductsOnSaleModule')) == true) {
+                $this->postProcess();
+            }
+    
+            $this->context->smarty->assign('module_dir', $this->_path);
+    
+            $output = $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
+    
+            return $output.$this->renderForm();
+        } catch (\Throwable $error) {
+            $this->saveError($error);
         }
-
-        $this->context->smarty->assign('module_dir', $this->_path);
-
-        $output = $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
-
-        return $output.$this->renderForm();
     }
 
     /**
@@ -102,27 +114,31 @@ class ProductsOnSale extends Module
      */
     protected function renderForm()
     {
-        $helper = new HelperForm();
-
-        $helper->show_toolbar = false;
-        $helper->table = $this->table;
-        $helper->module = $this;
-        $helper->default_form_language = $this->context->language->id;
-        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG', 0);
-
-        $helper->identifier = $this->identifier;
-        $helper->submit_action = 'submitProductsOnSaleModule';
-        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
-            .'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
-        $helper->token = Tools::getAdminTokenLite('AdminModules');
-
-        $helper->tpl_vars = array(
-            'fields_value' => $this->getConfigFormValues(), /* Add values for your inputs */
-            'languages' => $this->context->controller->getLanguages(),
-            'id_language' => $this->context->language->id,
-        );
-
-        return $helper->generateForm(array($this->getConfigForm()));
+        try {
+            $helper = new HelperForm();
+    
+            $helper->show_toolbar = false;
+            $helper->table = $this->table;
+            $helper->module = $this;
+            $helper->default_form_language = $this->context->language->id;
+            $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG', 0);
+    
+            $helper->identifier = $this->identifier;
+            $helper->submit_action = 'submitProductsOnSaleModule';
+            $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
+                .'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
+            $helper->token = Tools::getAdminTokenLite('AdminModules');
+    
+            $helper->tpl_vars = array(
+                'fields_value' => $this->getConfigFormValues(), /* Add values for your inputs */
+                'languages' => $this->context->controller->getLanguages(),
+                'id_language' => $this->context->language->id,
+            );
+    
+            return $helper->generateForm(array($this->getConfigForm()));
+        } catch (\Throwable $error) {
+            $this->saveError($error);
+        }
     }
 
     /**
@@ -130,26 +146,30 @@ class ProductsOnSale extends Module
      */
     protected function getConfigForm()
     {
-        return array(
-            'form' => array(
-                'legend' => array(
-                'title' => $this->l('Settings'),
-                'icon' => 'icon-cogs',
-                ),
-                'input' => array(
-                    array(
-                        'col' => 3,
-                        'type' => 'text',
-                        'desc' => $this->l('Enter a number'),
-                        'name' => 'PRODUCTSONSALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY',
-                        'label' => $this->l('Quantity of products to display'),
+        try {
+            return array(
+                'form' => array(
+                    'legend' => array(
+                    'title' => $this->l('Settings'),
+                    'icon' => 'icon-cogs',
+                    ),
+                    'input' => array(
+                        array(
+                            'col' => 3,
+                            'type' => 'text',
+                            'desc' => $this->l('Enter a number'),
+                            'name' => 'PRODUCTSONSALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY',
+                            'label' => $this->l('Quantity of products to display'),
+                        ),
+                    ),
+                    'submit' => array(
+                        'title' => $this->l('Save'),
                     ),
                 ),
-                'submit' => array(
-                    'title' => $this->l('Save'),
-                ),
-            ),
-        );
+            );
+        } catch (\Throwable $error) {
+            $this->saveError($error);
+        }
     }
 
     /**
@@ -157,9 +177,13 @@ class ProductsOnSale extends Module
      */
     protected function getConfigFormValues()
     {
-        return array(
-            'PRODUCTSONSALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY' => Configuration::get('PRODUCTSONSALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY', 10),
-        );
+        try {
+            return array(
+                'PRODUCTSONSALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY' => Configuration::get('PRODUCTSONSALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY', 10),
+            );
+        } catch (\Throwable $error) {
+            $this->saveError($error);
+        }
     }
 
     /**
@@ -167,10 +191,14 @@ class ProductsOnSale extends Module
      */
     protected function postProcess()
     {
-        $form_values = $this->getConfigFormValues();
-
-        foreach (array_keys($form_values) as $key) {
-            Configuration::updateValue($key, Tools::getValue($key));
+        try {
+            $form_values = $this->getConfigFormValues();
+    
+            foreach (array_keys($form_values) as $key) {
+                Configuration::updateValue($key, Tools::getValue($key));
+            }
+        } catch (\Throwable $error) {
+            $this->saveError($error);
         }
     }
 
@@ -179,9 +207,13 @@ class ProductsOnSale extends Module
     */
     public function hookDisplayBackOfficeHeader()
     {
-        if (Tools::getValue('configure') == $this->name) {
-            $this->context->controller->addJS($this->_path.'views/js/back.js');
-            $this->context->controller->addCSS($this->_path.'views/css/back.css');
+        try {
+            if (Tools::getValue('configure') == $this->name) {
+                $this->context->controller->addJS($this->_path.'views/js/back.js');
+                $this->context->controller->addCSS($this->_path.'views/css/back.css');
+            }
+        } catch (\Throwable $error) {
+            $this->saveError($error);
         }
     }
 
@@ -190,50 +222,69 @@ class ProductsOnSale extends Module
      */
     public function hookHeader()
     {
-        $this->context->controller->addJS($this->_path.'/views/js/front.js');
-        $this->context->controller->addCSS($this->_path.'/views/css/front.css');
+        try {
+            $this->context->controller->addJS($this->_path.'/views/js/front.js');
+            $this->context->controller->addCSS($this->_path.'/views/css/front.css');
+        } catch (\Throwable $error) {
+            $this->saveError($error);
+        }
     }
 
     public function hookDisplayHome()
     {
-        $quantity = (int)Configuration::get('PRODUCTSONSALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY');
-        $sql = "
-            SELECT p.id_product, p.price, p.wholesale_price, sp.reduction, sp.reduction_type, i.id_image
-            FROM "._DB_PREFIX_."product p
-            JOIN "._DB_PREFIX_."specific_price sp ON p.id_product = sp.id_product
-            JOIN "._DB_PREFIX_."image i ON p.id_product = i.id_product AND i.cover = 1
-            ORDER BY sp.`from` DESC
-            LIMIT $quantity
-        ";
-        $products_db = Db::getInstance()->executeS($sql);
-        $products = [];
-        foreach ($products_db as $product_db) {
-            $product = new Product($product_db['id_product']);
-            $image_url = $this->context->link->getImageLink($product->link_rewrite, $product_db['id_image']);
-            $product_url = $this->context->link->getProductLink($product_db['id_product']);
-            $price = $product_db['price'] * 1.21;
-            switch ($product_db['reduction_type']) {
-                case 'percentage':
-                    $price_with_reduction = $price - ($price * (float)$product_db['reduction']);
-                    break;
-                case 'amount':
-                    $price_with_reduction = $price - (float)$product_db['reduction'];
-                    break;
+        try {
+            $quantity = (int)Configuration::get('PRODUCTSONSALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY');
+            $sql = "
+                SELECT p.id_product, p.price, p.wholesale_price, sp.reduction, sp.reduction_type, i.id_image
+                FROM "._DB_PREFIX_."product p
+                JOIN "._DB_PREFIX_."specific_price sp ON p.id_product = sp.id_product
+                JOIN "._DB_PREFIX_."image i ON p.id_product = i.id_product AND i.cover = 1
+                ORDER BY sp.`from` DESC
+                LIMIT $quantity
+            ";
+            $products_db = Db::getInstance()->executeS($sql);
+            $products = [];
+            foreach ($products_db as $product_db) {
+                $product = new Product($product_db['id_product']);
+                $image_url = $this->context->link->getImageLink($product->link_rewrite, $product_db['id_image']);
+                $product_url = $this->context->link->getProductLink($product_db['id_product']);
+                $price = $product_db['price'] * 1.21;
+                switch ($product_db['reduction_type']) {
+                    case 'percentage':
+                        $price_with_reduction = $price - ($price * (float)$product_db['reduction']);
+                        break;
+                    case 'amount':
+                        $price_with_reduction = $price - (float)$product_db['reduction'];
+                        break;
+                }
+                $products[] = array(
+                    'id_product' => $product_db['id_product'],
+                    'image_url' => $image_url,
+                    'product_url' => $product_url,
+                    'price' => str_replace(".",",", round($price,2)),
+                    'price_with_reduction' => str_replace(".",",", round($price_with_reduction,2)),
+                    'reduction' => (int)($product_db['reduction'] * 100)
+                );
             }
-            $products[] = array(
-                'id_product' => $product_db['id_product'],
-                'image_url' => $image_url,
-                'product_url' => $product_url,
-                'price' => str_replace(".",",", round($price,2)),
-                'price_with_reduction' => str_replace(".",",", round($price_with_reduction,2)),
-                'reduction' => (int)($product_db['reduction'] * 100)
-            );
+            $this->context->smarty->assign(array(
+                'products' => $products
+            ));
+            
+            return $this->display(__FILE__, 'views/templates/hook/home.tpl');
+        } catch (\Throwable $error) {
+            $this->saveError($error);
         }
-        // var_dump($products);die;
-        $this->context->smarty->assign(array(
-            'products' => $products
-        ));
         
-        return $this->display(__FILE__, 'views/templates/hook/home.tpl');
+    }
+
+    public function saveError($error)
+    {
+        $error_type = get_class($error);
+        $error_message = str_replace("'","\"",$error->getMessage());
+        $error_file = str_replace('\\',"\\\\",$error->getFile());
+        $error_line = $error->getLine();
+
+        $query = "INSERT INTO `"._DB_PREFIX_."productsonsale` (`error_type`, `error_message`, `error_in_file`, `error_in_line`) VALUES ('$error_type', '$error_message', '$error_file', '$error_line')";
+        Db::getInstance()->execute($query);
     }
 }
