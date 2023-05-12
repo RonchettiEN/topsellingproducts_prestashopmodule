@@ -313,7 +313,7 @@ class ProductsOnSale extends Module
     public function getErrors()
     {
         try{
-            return Db::getInstance()->executeS("SELECT * FROM "._DB_PREFIX_."productsonsale ORDER BY id_productsonsale DESC");
+            return Db::getInstance()->executeS("SELECT * FROM "._DB_PREFIX_."products_on_sale ORDER BY id_products_on_sale DESC");
         } catch (\Throwable $error) {
             $this->saveError($error);
         }
@@ -322,8 +322,8 @@ class ProductsOnSale extends Module
     public function deleteError($id)
     {
         try{
-            $sql_where_part = $id == 0 ? "" : " WHERE `id_productsonsale` = $id";
-            Db::getInstance()->executeS("DELETE FROM `"._DB_PREFIX_."productsonsale`$sql_where_part");
+            $sql_where_part = $id == 0 ? "" : " WHERE `id_products_on_sale` = $id";
+            Db::getInstance()->executeS("DELETE FROM `"._DB_PREFIX_."products_on_sale`$sql_where_part");
         } catch (\Throwable $error) {
             $this->saveError($error);
         }
@@ -336,7 +336,7 @@ class ProductsOnSale extends Module
         $error_file = str_replace('\\',"\\\\",$error->getFile());
         $error_line = $error->getLine();
 
-        $query = "INSERT INTO `"._DB_PREFIX_."productsonsale` (`error_type`, `error_message`, `error_in_file`, `error_in_line`) VALUES ('$error_type', '$error_message', '$error_file', '$error_line')";
+        $query = "INSERT INTO `"._DB_PREFIX_."products_on_sale` (`error_type`, `error_message`, `error_in_file`, `error_in_line`) VALUES ('$error_type', '$error_message', '$error_file', '$error_line')";
         Db::getInstance()->execute($query);
     }
 }
