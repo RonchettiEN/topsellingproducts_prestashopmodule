@@ -106,17 +106,16 @@ class ProductsOnSale extends Module
                 $this->deleteError($id);
             }
             
-            $output = $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
-            
-            $smarty_assign = ['module_dir' => $this->_path, 'errors' => $this->getErrors()];
-            $errors_output = "";
+            $smarty_assign = ['module_dir' => $this->_path];
             if((bool)Configuration::get('PRODUCTS_ON_SALE_SHOW_ERRORS_IN_CONFIG')){
                 $token = Tools::getAdminTokenLite('AdminModules');
-                $errors_output = $this->context->smarty->fetch($this->local_path.'views/templates/admin/errors.tpl');
                 $smarty_assign['action'] = "{$this->context->link->getAdminLink('AdminModules', false)}&configure={$this->name}&tab_module={$this->tab}&module_name={$this->name}&token={$token}";
+                $smarty_assign['errors'] = $this->getErrors();
             }
-
             $this->context->smarty->assign($smarty_assign);
+
+            $output = $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
+            $errors_output = (bool)Configuration::get('PRODUCTS_ON_SALE_SHOW_ERRORS_IN_CONFIG') ? $this->context->smarty->fetch($this->local_path.'views/templates/admin/errors.tpl') : "";
     
             return $output.$this->renderForm().$errors_output;
         } catch (\Throwable $error) {

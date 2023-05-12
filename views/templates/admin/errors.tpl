@@ -37,16 +37,16 @@
         {foreach from=$errors item=error key=key}
         <div class="error-container">
             <div class="error-item">
-                <strong>ID:</strong> {$error['id_productsonsale']}<br>
+                <strong>ID:</strong> {$error['id_products_on_sale']}<br>
                 <strong>Type:</strong> {$error['error_type']}<br>
                 <strong>Message:</strong> {$error['error_message']}<br>
                 <strong>File:</strong> {$error['error_in_file']}<br>
                 <strong>Line:</strong> {$error['error_in_line']}<br>
             </div>
             <div class="error-action">
-                <form method="post" action={$action} id="form_{$error['id_productsonsale']}">
-                    <input type="hidden" name="submitDeleteErrorProductsOnSaleModule" value="{$error['id_productsonsale']}" />
-                    <button type="submit" class="btn btn-danger" form="form_{$error['id_productsonsale']}">{l s='Delete' mod='productsonsale'}</button>
+                <form method="post" action={$action} id="form_{$error['id_products_on_sale']}">
+                    <input type="hidden" name="submitDeleteErrorProductsOnSaleModule" value="{$error['id_products_on_sale']}" />
+                    <button type="submit" class="btn btn-danger" form="form_{$error['id_products_on_sale']}">{l s='Delete' mod='productsonsale'}</button>
                 </form>
             </div>
         </div>
