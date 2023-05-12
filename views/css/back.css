@@ -25,3 +25,36 @@
 * Don't forget to prefix your containers with your own identifier
 * to avoid any conflicts with others containers.
 */
+
+.error-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-gap: 20px;
+}
+
+.error-container {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    background-color: #f2dede;
+    color: #a94442;
+    border: 1px solid #ebccd1;
+}
+
+.error-item {
+    margin-bottom: 10px;
+    word-wrap: break-word;
+    flex: 1;
+}
+
+.error-action {
+    text-align: right;
+}
+
+.error-title h3 {
+    text-align: left;
+}
+
+.error-title.error-action {
+    text-align: right;
+}

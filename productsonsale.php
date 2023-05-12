@@ -60,7 +60,8 @@ class ProductsOnSale extends Module
     public function install()
     {
         try {
-            Configuration::updateValue('PRODUCTSONSALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY', 10);
+            Configuration::updateValue('PRODUCTS_ON_SALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY', 10);
+            Configuration::updateValue('PRODUCTS_ON_SALE_SHOW_ERRORS_IN_CONFIG', true);
     
             include(dirname(__FILE__).'/sql/install.php');
     
@@ -76,7 +77,8 @@ class ProductsOnSale extends Module
     public function uninstall()
     {
         try {
-            Configuration::deleteByName('PRODUCTSONSALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY');
+            Configuration::deleteByName('PRODUCTS_ON_SALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY');
+            Configuration::deleteByName('PRODUCTS_ON_SALE_SHOW_ERRORS_IN_CONFIG');
     
             include(dirname(__FILE__).'/sql/uninstall.php');
     
@@ -98,12 +100,25 @@ class ProductsOnSale extends Module
             if (((bool)Tools::isSubmit('submitProductsOnSaleModule')) == true) {
                 $this->postProcess();
             }
-    
-            $this->context->smarty->assign('module_dir', $this->_path);
-    
+
+            if (((bool)Tools::isSubmit('submitDeleteErrorProductsOnSaleModule')) == true) {
+                $id = (int)Tools::getValue('submitDeleteErrorProductsOnSaleModule');
+                $this->deleteError($id);
+            }
+            
             $output = $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
+            
+            $smarty_assign = ['module_dir' => $this->_path, 'errors' => $this->getErrors()];
+            $errors_output = "";
+            if((bool)Configuration::get('PRODUCTS_ON_SALE_SHOW_ERRORS_IN_CONFIG')){
+                $token = Tools::getAdminTokenLite('AdminModules');
+                $errors_output = $this->context->smarty->fetch($this->local_path.'views/templates/admin/errors.tpl');
+                $smarty_assign['action'] = "{$this->context->link->getAdminLink('AdminModules', false)}&configure={$this->name}&tab_module={$this->tab}&module_name={$this->name}&token={$token}";
+            }
+
+            $this->context->smarty->assign($smarty_assign);
     
-            return $output.$this->renderForm();
+            return $output.$this->renderForm().$errors_output;
         } catch (\Throwable $error) {
             $this->saveError($error);
         }
@@ -128,7 +143,7 @@ class ProductsOnSale extends Module
             $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
                 .'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
             $helper->token = Tools::getAdminTokenLite('AdminModules');
-    
+            
             $helper->tpl_vars = array(
                 'fields_value' => $this->getConfigFormValues(), /* Add values for your inputs */
                 'languages' => $this->context->controller->getLanguages(),
@@ -158,8 +173,26 @@ class ProductsOnSale extends Module
                             'col' => 3,
                             'type' => 'text',
                             'desc' => $this->l('Enter a number'),
-                            'name' => 'PRODUCTSONSALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY',
+                            'name' => 'PRODUCTS_ON_SALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY',
                             'label' => $this->l('Quantity of products to display'),
+                        ),
+                        array(
+                            'type' => 'switch',
+                            'label' => $this->l('Show errors in config'),
+                            'name' => 'PRODUCTS_ON_SALE_SHOW_ERRORS_IN_CONFIG',
+                            'is_bool' => true,
+                            'values' => array(
+                                array(
+                                    'id' => 'active_on',
+                                    'value' => true,
+                                    'label' => $this->l('Enabled')
+                                ),
+                                array(
+                                    'id' => 'active_off',
+                                    'value' => false,
+                                    'label' => $this->l('Disabled')
+                                )
+                            ),
                         ),
                     ),
                     'submit' => array(
@@ -179,7 +212,8 @@ class ProductsOnSale extends Module
     {
         try {
             return array(
-                'PRODUCTSONSALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY' => Configuration::get('PRODUCTSONSALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY', 10),
+                'PRODUCTS_ON_SALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY' => (int)Configuration::get('PRODUCTS_ON_SALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY', 10),
+                'PRODUCTS_ON_SALE_SHOW_ERRORS_IN_CONFIG' => (bool)Configuration::get('PRODUCTS_ON_SALE_SHOW_ERRORS_IN_CONFIG'),
             );
         } catch (\Throwable $error) {
             $this->saveError($error);
@@ -233,7 +267,7 @@ class ProductsOnSale extends Module
     public function hookDisplayHome()
     {
         try {
-            $quantity = (int)Configuration::get('PRODUCTSONSALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY');
+            $quantity = (int)Configuration::get('PRODUCTS_ON_SALE_QUANTITY_OF_PRODUCTS_TO_DISPLAY');
             $sql = "
                 SELECT p.id_product, p.price, p.wholesale_price, sp.reduction, sp.reduction_type, i.id_image
                 FROM "._DB_PREFIX_."product p
@@ -274,7 +308,25 @@ class ProductsOnSale extends Module
         } catch (\Throwable $error) {
             $this->saveError($error);
         }
-        
+    }
+
+    public function getErrors()
+    {
+        try{
+            return Db::getInstance()->executeS("SELECT * FROM "._DB_PREFIX_."productsonsale ORDER BY id_productsonsale DESC");
+        } catch (\Throwable $error) {
+            $this->saveError($error);
+        }
+    }
+
+    public function deleteError($id)
+    {
+        try{
+            $sql_where_part = $id == 0 ? "" : " WHERE `id_productsonsale` = $id";
+            Db::getInstance()->executeS("DELETE FROM `"._DB_PREFIX_."productsonsale`$sql_where_part");
+        } catch (\Throwable $error) {
+            $this->saveError($error);
+        }
     }
 
     public function saveError($error)

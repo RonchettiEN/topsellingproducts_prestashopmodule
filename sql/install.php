@@ -25,9 +25,9 @@
 */
 $sql = array();
 
-$sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'productsonsale` (
-    `id_productsonsale` int(11) NOT NULL AUTO_INCREMENT,
-    PRIMARY KEY  (`id_productsonsale`),
+$sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'products_on_sale` (
+    `id_products_on_sale` int(11) NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY  (`id_products_on_sale`),
     `error_type` varchar(255) DEFAULT NULL,
     `error_message` varchar(255) DEFAULT NULL,
     `error_in_file` varchar(255) DEFAULT NULL,
